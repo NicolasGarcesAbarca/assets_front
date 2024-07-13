@@ -10,13 +10,27 @@ import { idGestores } from "@/lib/payments";
 import Gestor from "@/types/gestor";
 import { abonoTotalByGestor, avatarName, email, gestorById } from "@/lib/gestor";
 import { fetchGestores } from "@/lib/fetcher";
+import ErrorPage from "./Error";
+import { GridLoader } from "react-spinners";
 
 interface IProps {
     pagos: Payment[]
 }
 
 export default function GestorSection({ pagos }: IProps) {
-    const { data: gestores } = useSWR<Gestor[], any, any>(idGestores(pagos), fetchGestores)
+    const { data: gestores, isLoading, error } = useSWR<Gestor[], any, any>(idGestores(pagos), fetchGestores)
+    if (error) {
+        return <ErrorPage message={"Error al conectarse a la api"} />
+    }
+
+    if (isLoading) {
+        return <div className="flex min-h-screen w-full justify-center items-center">
+            <GridLoader
+                loading
+                size={10}
+                color="#32655b" />
+        </div>
+    }
 
     return <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="xl:col-span-2">

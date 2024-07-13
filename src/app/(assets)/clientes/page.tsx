@@ -23,12 +23,17 @@ import Payment from "@/types/payments"
 import { GridLoader } from "react-spinners"
 import { apiBaseURL } from "@/lib/constants"
 import { fetchClients } from "@/lib/fetcher"
+import ErrorPage from "@/components/Error"
 
 
 
 export default function Gestores() {
   const [clientSelected, setClientSelected] = React.useState<Client>({} as Client)
-  const { data, isLoading } = useSWR(`${apiBaseURL}/clientes`, fetchClients)
+  const { data, isLoading, error } = useSWR(`${apiBaseURL}/clientes`, fetchClients)
+
+  if (error) {
+    return <ErrorPage message={"Error al conectarse a la api gestores"} />
+  }
 
   if (isLoading) {
     return <div className="flex min-h-screen w-full justify-center items-center">
